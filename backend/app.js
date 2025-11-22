@@ -1,14 +1,17 @@
-const express = require('express');
-const cors = require('cors');
-const path = require('path');
+// 加载环境变量
+require('dotenv').config();// 使用dotenv加载.env文件中的环境变量
+//导入依赖
+const express = require('express');//Web框架，帮你处理HTTP请求和响应
+const cors = require('cors');//跨域资源共享，让前端能访问你的后端
+const path = require('path');//Node.js内置模块，处理文件路径
 
-const app = express();
-const PORT = 3000;
+const app = express();//app 是后端应用主体，所有功能都挂在它上面
+const PORT = 3000;//服务器监听端口
 
 // 中间件
-app.use(cors());
-app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(cors());//启用CORS，允许跨域请求
+app.use(express.json());//解析JSON请求体
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));//静态文件服务，访问/uploads路径时，返回uploads文件夹内容
 
 // 模拟数据（临时使用，后续可连接数据库）
 const users = [
@@ -24,9 +27,9 @@ const posts = [
   }
 ];
 
-// 路由
-app.use('/api/auth', require('./routes/auth')(users));
-app.use('/api/posts', require('./routes/posts')(posts));
+// 路由挂载
+app.use('/api/auth', require('./routes/auth')(users));//所有 /api/auth 开头的请求 → 交给 auth.js 处理
+app.use('/api/posts', require('./routes/posts')(posts));//所有 /api/posts 开头的请求 → 交给 posts.js 处理
 
 // 健康检查接口
 app.get('/api/hello', (req, res) => {
@@ -38,7 +41,7 @@ app.get('/api/hello', (req, res) => {
 });
 
 // 启动服务器
-app.listen(PORT, () => {
+app.listen(PORT, () => {//监听指定端口
   console.log('🎉 后端服务器启动成功！');
   console.log(`📍 访问地址: http://localhost:${PORT}`);
   console.log('✅ 测试接口: http://localhost:3000/api/hello');
