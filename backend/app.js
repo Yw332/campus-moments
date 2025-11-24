@@ -4,6 +4,7 @@ require('dotenv').config();// 使用dotenv加载.env文件中的环境变量
 const express = require('express');//Web框架，帮你处理HTTP请求和响应
 const cors = require('cors');//跨域资源共享，让前端能访问你的后端
 const path = require('path');//Node.js内置模块，处理文件路径
+const { testConnection } = require('./config/database');//数据库连接文件
 
 const app = express();//app 是后端应用主体，所有功能都挂在它上面
 const PORT = 3000;//服务器监听端口
@@ -40,9 +41,22 @@ app.get('/api/hello', (req, res) => {
   });
 });
 
-// 启动服务器
-app.listen(PORT, () => {//监听指定端口
-  console.log('🎉 后端服务器启动成功！');
-  console.log(`📍 访问地址: http://localhost:${PORT}`);
-  console.log('✅ 测试接口: http://localhost:3000/api/hello');
-});
+// 在服务器启动前测试数据库连接
+async function initializeApp() {
+  console.log('🔗 正在连接数据库...');
+  const dbConnected = await testConnection();
+  
+  if (dbConnected) {
+    // 数据库连接成功后才启动服务器
+    app.listen(PORT, () => {//监听指定端口
+      console.log(`🎉 后端服务器启动成功！`);
+      console.log(`📍 访问地址: http://localhost:${PORT}`);
+      console.log(`✅ 测试接口: http://localhost:${PORT}/api/hello`);
+    });
+  } else {
+    console.log('❌ 服务器启动失败：数据库连接异常');
+    process.exit(1);
+  }
+}
+
+initializeApp();
