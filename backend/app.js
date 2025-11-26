@@ -19,10 +19,10 @@ const users = [
   { id: 1, username: 'admin', password: '123456' }
 ];
 const posts = [
-  { 
-    id: 1, 
-    content: '欢迎使用校园时刻！', 
-    userId: 1, 
+  {
+    id: 1,
+    content: '欢迎使用校园时刻！',
+    userId: 1,
     username: 'admin',
     createTime: new Date().toISOString()
   }
@@ -45,7 +45,7 @@ app.get('/api/hello', (req, res) => {
 async function initializeApp() {
   console.log('🔗 正在连接数据库...');
   const dbConnected = await testConnection();
-  
+
   if (dbConnected) {
     // 数据库连接成功后才启动服务器
     app.listen(PORT, () => {//监听指定端口
@@ -58,5 +58,26 @@ async function initializeApp() {
     process.exit(1);
   }
 }
+// 统一响应格式中间件
+app.use((req, res, next) => {
+  // 成功响应方法
+  res.success = (data, message = 'success') => {
+    res.json({
+      code: 200,
+      data: data,
+      message: message
+    });
+  };
 
+  // 错误响应方法
+  res.error = (message, code = 400) => {
+    res.json({
+      code: code,
+      data: null,
+      message: message
+    });
+  };
+
+  next();
+});
 initializeApp();

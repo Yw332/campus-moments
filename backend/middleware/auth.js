@@ -6,7 +6,7 @@ const authMiddleware = (req, res, next) => {
   const authHeader = req.header('Authorization');
   
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({
+    return res.status(200).json({//
       code: 401,
       message: '访问被拒绝，请先登录',
       data: null
@@ -22,7 +22,7 @@ const authMiddleware = (req, res, next) => {
     next(); // 验证通过，继续执行后续代码
   } catch (error) {
     // token无效或过期
-    return res.status(401).json({
+    return res.status(200).json({
       code: 401,
       message: '令牌无效或已过期',
       data: null

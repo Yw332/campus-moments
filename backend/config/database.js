@@ -16,7 +16,7 @@ const dbConfig = {
   port: parseInt(process.env.DB_PORT) || 3306,
   user: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_DATABASE,
+  database: process.env.DB_DATABASE || 'campus_moments',
   charset: 'utf8mb4',
   timezone: '+08:00',
   connectionLimit: 10,

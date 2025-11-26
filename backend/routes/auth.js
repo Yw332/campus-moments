@@ -8,7 +8,7 @@ module.exports = (users) => {
 
     const existingUser = users.find(user => user.username === username);
     if (existingUser) {
-      return res.json({ code: 400, message: '用户名已存在' });
+      return res.json({ code: 400, message: '用户名已存在', data: null  });
     }
 
     const newUser = {
@@ -56,7 +56,7 @@ module.exports = (users) => {
       data: {
         userId: user.id,
         username: user.username,
-        token: token 
+        token: token
       }
     });
   });
