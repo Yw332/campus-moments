@@ -27,25 +27,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// 模拟数据（临时使用，后续可连接数据库）
-const users = [
-  { id: 1, username: 'admin', password: '123456' }
-];
-const posts = [
-  {
-    id: 1,
-    content: '欢迎使用校园时刻！',
-    userId: 1,
-    username: 'admin',
-    createTime: new Date().toISOString()
-  }
-];
-
-// 路由挂载
-app.use('/api/auth', require('./routes/auth')(users));//所有 /api/auth 开头的请求 → 交给 auth.js 处理
-app.use('/api/posts', require('./routes/posts')(posts));//所有 /api/posts 开头的请求 → 交给 posts.js 处理
+// 路由挂载（使用数据库）
+app.use('/api/auth', require('./routes/auth')());//所有 /api/auth 开头的请求 → 交给 auth.js 处理
+app.use('/api/posts', require('./routes/posts')());//所有 /api/posts 开头的请求 → 交给 posts.js 处理
 app.use('/api/upload', require('./routes/upload'));
-app.use('/api/user', require('./routes/user')(users));
+app.use('/api/user', require('./routes/user')());
 
 // 健康检查接口
 app.get('/api/hello', (req, res) => {
