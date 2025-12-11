@@ -7,12 +7,25 @@ const path = require('path');//Node.js内置模块，处理文件路径
 const { testConnection } = require('./config/database');//数据库连接文件
 
 const app = express();//app 是后端应用主体，所有功能都挂在它上面
-const PORT = 3000;//服务器监听端口
+const PORT = process.env.PORT || 3000;//服务器监听端口
 
 // 中间件
 app.use(cors());//启用CORS，允许跨域请求
 app.use(express.json());//解析JSON请求体
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));//静态文件服务，访问/uploads路径时，返回uploads文件夹内容
+
+// 统一响应格式中间件（放在路由前）
+app.use((req, res, next) => {
+  res.success = (data, message = 'success') => {
+    res.json({ code: 200, data: data, message: message });
+  };
+
+  res.error = (message, code = 400) => {
+    res.json({ code: code, data: null, message: message });
+  };
+
+  next();
+});
 
 // 模拟数据（临时使用，后续可连接数据库）
 const users = [
@@ -31,6 +44,8 @@ const posts = [
 // 路由挂载
 app.use('/api/auth', require('./routes/auth')(users));//所有 /api/auth 开头的请求 → 交给 auth.js 处理
 app.use('/api/posts', require('./routes/posts')(posts));//所有 /api/posts 开头的请求 → 交给 posts.js 处理
+app.use('/api/upload', require('./routes/upload'));
+app.use('/api/user', require('./routes/user')(users));
 
 // 健康检查接口
 app.get('/api/hello', (req, res) => {
